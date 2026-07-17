@@ -1,0 +1,138 @@
+---
+title: "analyse_models"
+author: "RB"
+date: "2026-07-15"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+# load the packages
+library(rstan)
+library(tidyverse)
+library(R.matlab)
+library(bayesplot)
+library(wesanderson)
+library(waterfalls)
+```
+
+```{r}
+### model comparison ### 
+
+model_1 <- load('modelling/fitted_models/model_1.RData')
+model_1 <- fit_rl_1
+model_2 <- load('modelling/fitted_models/model_2.RData')
+model_2 <- fit_rl_2
+model_3 <- load('modelling/fitted_models/model_3.RData')
+model_3 <- fit_rl_3
+model_4 <- load('modelling/fitted_models/model_4.RData')
+model_4 <- fit_rl_4
+model_5 <- load('modelling/fitted_models/model_5.RData')
+model_5 <- fit_rl
+model_6 <- load('modelling/fitted_models/model_6.RData')
+model_6 <- fit_rl
+
+# get the log likelihoods
+LL1 <- loo::extract_log_lik(model_1)
+LL2 <- loo::extract_log_lik(model_2)
+LL3 <- loo::extract_log_lik(model_3)
+LL4 <- loo::extract_log_lik(model_4)
+LL5 <- loo::extract_log_lik(model_5)
+LL6 <- loo::extract_log_lik(model_6)
+
+
+LL1_mean <- mean(LL1)
+LL2_mean <- mean(LL2)
+LL3_mean <- mean(LL3)
+LL4_mean <- mean(LL4)
+LL5_mean <- mean(LL5)
+LL6_mean <- mean(LL6)
+
+# calculate and compare looic
+loo1 <- loo::loo(LL1)
+loo2 <- loo::loo(LL2)
+loo3 <- loo::loo(LL3)
+loo4 <- loo::loo(LL4)
+loo5 <- loo::loo(LL5)
+loo6 <- loo::loo(LL6)
+
+
+loo::loo_compare(loo1,loo2,loo3,loo4,loo5,loo6)
+
+# plot the looic
+looic = rbind(loo1[[7]]-loo5[[7]], loo2[[7]]-loo5[[7]], loo3[[7]]-loo5[[7]], loo4[[7]]-loo5[[7]], loo5[[7]]-loo5[[7]], loo6[[7]]-loo5[[7]])
+looic_se = rbind(loo1[[10]], loo2[[10]], loo3[[10]], loo4[[10]],loo5[[10]], loo6[[10]])
+looic_df <- cbind(looic, looic_se) %>%
+  as.data.frame()
+looic_df$model <- c("Null_model","simple_RW","two_channel","two_channel_motivation","motivation_counterfactual","Subjective_value")
+
+
+ggplot(looic_df, aes(fct_rev(fct_reorder(model, V1)),
+                     V1)) +
+  geom_bar(stat = "identity", fill='#FF9B5E') +
+  theme_classic()+
+  theme(axis.text=element_text(size=12),
+           axis.title=element_text(size=16),
+           plot.title=element_text(size=18)) +
+  labs(y ="LOOIC",x='Model') +
+  scale_x_discrete(guide = guide_axis(angle = 30)) +
+  ggtitle('Two currency task models')
+
+## participant wise looics
+LL5_ppt <- loo5$pointwise[,4]
+x=as.character(1:length(LL5_ppt))
+df <- as.data.frame(cbind(x,LL5_ppt))
+
+# subtract min from all values
+min_looic <- as.numeric(min(df$LL5_ppt))
+df$LL5_ppt <- as.numeric(df$LL5_ppt)-min_looic
+
+
+ggplot(df, aes(fct_rev(fct_reorder(x, LL5_ppt)),
+                     LL5_ppt)) +
+  geom_bar(stat = "identity", fill='#FF9B5E') +
+  theme_classic()+
+  theme(axis.text=element_text(size=12),
+        axis.title=element_text(size=16),
+        plot.title=element_text(size=18)) +
+  labs(y ="LOOIC difference",x='subject') +
+  scale_x_discrete(guide = guide_axis(angle = 90)) +
+  ggtitle('Individual fits')
+
+
+
+
+# manual calculations for BIC
+
+nt = 500 # number of trials
+
+BIC_1 = sum(1 * log(nt) - 2*colMeans(LL1))
+BIC_2 = sum(2 * log(nt) - 2*colMeans(LL2))
+BIC_3 = sum(2 * log(nt) - 2*colMeans(LL3))
+BIC_4 = sum(2 * log(nt) - 2*colMeans(LL4))
+BIC_5 = sum(2 * log(nt) - 2*colMeans(LL5))
+BIC_6 = sum(2 * log(nt) - 2*colMeans(LL6))
+
+
+# parameter scatter
+sum = summary(model_5)
+sum = as.data.frame(sum$summary)
+online_lr <- sum$mean[5:26]
+online_tau <- sum$mean[49:70]
+#offline_lr <- sum_offline$mean[5:38]
+#offline_tau <- sum_offline$mean[73:106]
+
+#d <- rep('Deterministic', 34)
+s <- rep('Stochastic', 22)
+#version <- c(s,d)
+lr <- c(online_lr)
+tau <- c(online_tau)
+
+params <- as.data.frame(cbind(version,tau,lr))
+params$tau <- as.numeric(params$tau)
+params$lr <- as.numeric(params$lr)
+
+param_scatter <- ggplot(params, aes(x=lr,y=tau)) +
+  geom_point() +
+  theme_classic() 
+
+```

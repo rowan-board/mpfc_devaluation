@@ -10,14 +10,10 @@ Load packages and Data
 library(tidyverse)
 library(rstan)
 
-parameters <- read.csv("modelling/summaries/m5_summary.csv")
+parameters <- read.csv('data/clean/parameters_online.csv')
 
-lr = parameters[7:28,2]
-inv_m = parameters[95:116,2]
-inv_tau = parameters[73:94,2]
-
-lr = parameters[5:26,2]
-inv_tau = parameters[49:70,2]
+lr = parameters$lr
+inv_tau = parameters$tau
 ```
 
 ### choice simulation ###
@@ -460,5 +456,5 @@ data$stateName <- mapping[data$state]
 # save simmed data #
 
 ```{r}
-write.csv(data,'data/simulations/simulated_choice_data.csv')
+write.csv(data,'data/clean/sim_data_online.csv')
 ```

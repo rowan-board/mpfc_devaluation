@@ -23,7 +23,7 @@ source('scripts/CrawfordHowell.R')
 
 load online or offline data (online = in scanner)
 ```{r}
-online = 0
+online = 1
 ```
 
 load in the data 
@@ -150,8 +150,8 @@ plotting_params['subj'] <- rep(1:n)
 lr_tau <- ggplot(plotting_params, aes(x=lr, y=tau)) +
   geom_point() +
   theme_classic() +
-  scale_x_continuous(n.breaks=5,limits=c(0.5,0.9)) +
-  scale_y_continuous(n.breaks=7,limits=c(0,6)) +
+  scale_x_continuous(n.breaks=5,limits=c(0,1)) +
+  scale_y_continuous(n.breaks=7,limits=c(0,7)) +
   theme(legend.position='none',
         axis.text=element_text(size=14),
         axis.title=element_text(size=17),

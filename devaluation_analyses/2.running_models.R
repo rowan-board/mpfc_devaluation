@@ -10,13 +10,13 @@ library(wesanderson)
 library(waterfalls)
 
 # load the data
-load('modelling/datalists/online_datalist.RData')
+load('modelling/datalists/online_patient_datalist.RData')
 
 # running stan
 rstan_options(auto_write = TRUE)
 options(mc.cores = 4)
 
-modelFile <- 'modelling/models/model_1.stan'
+modelFile <- 'modelling/models/DA_model_5.stan'
 
 nIter     <- 2000
 nChains   <- 4 

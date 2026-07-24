@@ -6,21 +6,21 @@ This repository contains the behavioural data, task code, and analysis code for 
 
 ## Repository structure
 
-- **`analyse_timeCourses/`**
+**`analyse_timeCourses/`**
 - MATLAB scripts and supporting data for plotting the evolution of neural activity (BOLD signal) following task events (e.g. reward receipt).
 
-- **`Devaluation_analyses/`**
+**`Devaluation_analyses/`**
 - R scripts and behavioural data for:
   - behavioural analyses and visualisations
   - computational modelling of task behaviour
   - statistical analyses
 
-- **`fmri_analyses/`**
+**`fmri_analyses/`**
 - Scripts for the main fMRI analyses, including:
   - activation (GLM) analyses
   - multivoxel pattern analysis (MVPA)
   - functional connectivity analyses
 
-- **`task/`**
+**`task/`**
 - Source code required to run the behavioural devaluation task.
 

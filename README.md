@@ -1,7 +1,7 @@
 # Goal-directed weighting of outcome values in ventromedial prefrontal cortex 
 Repository for: Board, Holton, Rushworth, & Manohar (in prep)
 
-# Project overview
+## Project overview
 This repository contains the behavioural data, task code, and analysis code for a study investigating how goals/motivation influences choices in a novel decision making task (The two currecny task). The project explores the neural representations of goal directed action using fMRI, comuptational modelling and machine learning.
 
 ## Repository structure
